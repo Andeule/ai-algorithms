@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrainingExampleRow<T> {
+public class TrainingExampleRow<A,T> {
 
-    List<T> attributes = new ArrayList<>();
-    boolean isPositiveExample;
+    List<A> attributes = new ArrayList<>();
+    T targetValue;
 
-    public TrainingExampleRow(boolean isPositiveExample, T... attributes) {
-        this.isPositiveExample = isPositiveExample;
+    public TrainingExampleRow(T targetValue, A... attributes) {
+        this.targetValue = targetValue;
         this.attributes = Arrays.asList(attributes);
     }
 

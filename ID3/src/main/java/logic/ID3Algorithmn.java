@@ -11,13 +11,10 @@ public class ID3Algorithmn {
         return generatedTree;
     }
 
+
+
     ///////////////////////////////////////////////
     //------------PRIVATE------------------------//
     ///////////////////////////////////////////////
 
-    private static boolean allTrainingExamplesArePositive(String[][] trainingExamples){
-
-        int lastColumnIndex = trainingExamples[0].length -1;
-
-    }
 }
