@@ -8,10 +8,10 @@ import java.util.List;
 public class TrainingExample {
 
     List<TrainingExampleRow> attributes;
-    TrainingExampleRow headline;
+    TrainingExampleHeadline headline;
 
 
-    public TrainingExample(TrainingExampleRow headline, List<TrainingExampleRow> attributes) {
+    public TrainingExample(TrainingExampleHeadline headline, List<TrainingExampleRow> attributes) {
         this.headline = headline;
         this.attributes = attributes;
     }
