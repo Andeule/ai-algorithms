@@ -33,4 +33,16 @@ public class ID3AlgorithmnTest {
     public void testOriginalEntropy(){
         Assert.assertEquals(1.5709505944546684,ID3Algorithmn.calculateOriginalEntropy(trainingExample),0.0001);
     }
+
+    @Test
+    public void testRelativeEntropy(){
+        double relativeEntropy = ID3Algorithmn.calculateRelativeEntropy(trainingExample,0);
+        Assert.assertEquals(1.0754744789463977,relativeEntropy,0.00001);
+    }
+
+    @Test
+    public void testInformationGain(){
+        double informationGain = ID3Algorithmn.calculateInformationGain(trainingExample,0);
+        Assert.assertEquals(0.4955,informationGain,0.001);
+    }
 }
