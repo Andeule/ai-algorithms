@@ -43,6 +43,7 @@ public class ID3Algorithmn {
         return term;
     }
 
+    //TODO encapsulate parts and make it more readable
     public static double calculateRelativeEntropy(TrainingExample trainingExample, int culmnOfAttribute) {
         double relativeEntropy = 0;
         int countNumberOfAttributes = trainingExample.getAttributes().size();
