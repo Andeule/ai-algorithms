@@ -1,9 +1,12 @@
 package model;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class TrainingExampleRow<A,T> {
 
     List<A> attributes = new ArrayList<>();
