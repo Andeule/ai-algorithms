@@ -36,7 +36,7 @@ public class ID3AlgorithmnTest {
 
     @Test
     public void testRelativeEntropy(){
-        double relativeEntropy = ID3Algorithmn.calculateRelativeEntropy(trainingExample,0);
+        double relativeEntropy = ID3Algorithmn.calculateRelativeEntropyOfOneAttributeOrTargetValue(trainingExample,0);
         Assert.assertEquals(1.0754744789463977,relativeEntropy,0.00001);
     }
 

@@ -16,22 +16,16 @@ public class ID3Algorithmn {
 
         return generatedTree;
     }
-    public static double calculateInformationGain(TrainingExample trainingExample,int columnIndexOfAttribute){
+
+    public static double calculateInformationGain(TrainingExample trainingExample, int columnIndexOfAttribute) {
         double originalEntropy = calculateOriginalEntropy(trainingExample);
-        double relativeEntropy = calculateRelativeEntropy(trainingExample,columnIndexOfAttribute);
-        return originalEntropy-relativeEntropy;
+        double relativeEntropy = calculateRelativeEntropyOfOneAttributeOrTargetValue(trainingExample, columnIndexOfAttribute);
+        return originalEntropy - relativeEntropy;
     }
 
     public static double calculateOriginalEntropy(TrainingExample trainingExample) {
         //Get fraction of each target value
-        Map<Object, Double> fractionOfTargetValue = new HashMap<>();
-        for (TrainingExampleRow row : trainingExample.getAttributes()) {
-            if (fractionOfTargetValue.containsKey(row.getTargetValue())) {
-                fractionOfTargetValue.put(row.getTargetValue(), 1D + fractionOfTargetValue.get(row.getTargetValue()));
-            } else {
-                fractionOfTargetValue.put(row.getTargetValue(), 1D);
-            }
-        }
+        Map<Object, Double> fractionOfTargetValue = calculateFractionOfAttributes(trainingExample.getAttributes(),true, 0);
         //Calculate original entropy
         double countOfAttributes = trainingExample.getAttributes().size();
         double term = 0;
@@ -44,50 +38,67 @@ public class ID3Algorithmn {
     }
 
     //TODO encapsulate parts and make it more readable
-    public static double calculateRelativeEntropy(TrainingExample trainingExample, int culmnOfAttribute) {
-        double relativeEntropy = 0;
+    public static double calculateRelativeEntropyOfOneAttributeOrTargetValue(TrainingExample trainingExample, int columnOfAttribute) {
+
         int countNumberOfAttributes = trainingExample.getAttributes().size();
 
-        //calculate whole fraction of that attribute e.g. age
-        Map<Object, Double> fractionOfAttribute = new HashMap<>();
-        for (TrainingExampleRow row : trainingExample.getAttributes()) {
-            Object cellValueAttribute = row.getAttributes().get(culmnOfAttribute);
-            if (fractionOfAttribute.containsKey(cellValueAttribute)) {
-                fractionOfAttribute.put(cellValueAttribute, 1D + fractionOfAttribute.get(cellValueAttribute));
-            } else {
-                fractionOfAttribute.put(cellValueAttribute, 1D);
-            }
-        }
+        //calculates the fraction of each attribute in the selected column e.g. column ="age", attributes ="young","old","average"
+        Map<Object, Double> fractionOfAttribute = calculateFractionOfAttributes(trainingExample.getAttributes(),false,columnOfAttribute);
 
-
-
+        double relativeEntropy = 0;
         for (Map.Entry<Object, Double> entry : fractionOfAttribute.entrySet()) {
-            Map<Object, Double> fractionOfInnerAttribute = new HashMap<>();
-            //FRACTION FOR ONE ATTRIBUTE's target value e.g. old, young
+            Map<Object, Double> fractionOfAttributesTargetValues = new HashMap<>();
+            //Calculate the target value fraction withing an attribute (e.g. "young")
             for (TrainingExampleRow row : trainingExample.getAttributes()) {
                 //Fraction of
-                if (row.getAttributes().get(culmnOfAttribute).equals(entry.getKey())) {
-                    if (fractionOfInnerAttribute.containsKey(row.getTargetValue())) {
-                        fractionOfInnerAttribute.put(row.getTargetValue(), 1D + fractionOfInnerAttribute.get(row.getTargetValue()));
+                if (row.getAttributes().get(columnOfAttribute).equals(entry.getKey())) {
+                    if (fractionOfAttributesTargetValues.containsKey(row.getTargetValue())) {
+                        fractionOfAttributesTargetValues.put(row.getTargetValue(), 1D + fractionOfAttributesTargetValues.get(row.getTargetValue()));
                     } else {
-                        fractionOfInnerAttribute.put(row.getTargetValue(), 1D);
+                        fractionOfAttributesTargetValues.put(row.getTargetValue(), 1D);
                     }
                 }
             }
-            //calculate
-            double term = 0;
-            for (Map.Entry<Object, Double> entryOfInner : fractionOfInnerAttribute.entrySet()) {
-                BigDecimal numinator = new BigDecimal(entryOfInner.getValue());
-                BigDecimal denominator = new BigDecimal(entry.getValue());
-                term += (-(numinator.divide(denominator,4,RoundingMode.HALF_DOWN).doubleValue()) * (Math.log(numinator.divide(denominator,4,RoundingMode.HALF_DOWN).doubleValue()) / Math.log(2)));
-            }
-            BigDecimal numinator = new BigDecimal(entry.getValue());
-            BigDecimal denominator = new BigDecimal(countNumberOfAttributes);
-            term *= numinator.divide(denominator,4,RoundingMode.HALF_DOWN).doubleValue();
-            relativeEntropy += term;
+            relativeEntropy += calculateRelativeEntropyOfOneAttributeOrTargetValue(fractionOfAttributesTargetValues, entry, countNumberOfAttributes);
         }
         return relativeEntropy;
     }
+
+    private static Map<Object, Double> calculateFractionOfAttributes(List<TrainingExampleRow> trainingExampleRowList, boolean isTargetValueCalculation, int columnOfAttribute){
+        Map<Object, Double> fractionOfTargetValue = new HashMap<>();
+        for (TrainingExampleRow row : trainingExampleRowList) {
+            Object objectForFractionCalculation;
+            if(isTargetValueCalculation) objectForFractionCalculation = row.getTargetValue();
+            else objectForFractionCalculation = row.getAttributes().get(columnOfAttribute);
+            if (fractionOfTargetValue.containsKey(objectForFractionCalculation)) {
+                fractionOfTargetValue.put(objectForFractionCalculation, 1D + fractionOfTargetValue.get(objectForFractionCalculation));
+            } else {
+                fractionOfTargetValue.put(objectForFractionCalculation, 1D);
+            }
+        }
+        return fractionOfTargetValue;
+    }
+
+    /**
+     * Calculate the relative entropy of either one attribute or of the target values
+     * @param fractionOfAttributesTargetValues
+     * @param attribute
+     * @param countNumberOfAttributes
+     * @return
+     */
+    private static double calculateRelativeEntropyOfOneAttributeOrTargetValue(Map<Object, Double> fractionOfAttributesTargetValues, Map.Entry<Object, Double> attribute, int countNumberOfAttributes) {
+        double term = 0;
+        for (Map.Entry<Object, Double> entryOfInner : fractionOfAttributesTargetValues.entrySet()) {
+            BigDecimal numinator = new BigDecimal(entryOfInner.getValue());
+            BigDecimal denominator = new BigDecimal(attribute.getValue());
+            term += (-(numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue()) * (Math.log(numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue()) / Math.log(2)));
+        }
+        BigDecimal numinator = new BigDecimal(attribute.getValue());
+        BigDecimal denominator = new BigDecimal(countNumberOfAttributes);
+        term *= numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue();
+        return term;
+    }
+
 
 ///////////////////////////////////////////////
 //------------PRIVATE------------------------//
