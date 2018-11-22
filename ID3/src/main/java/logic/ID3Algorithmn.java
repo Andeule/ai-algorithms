@@ -26,10 +26,11 @@ public class ID3Algorithmn {
         //Get fraction of each target value
         Map<Object, Double> fractionOfTargetValue = new HashMap<>();
         for (TrainingExampleRow row : trainingExample.getAttributes()) {
-            if (fractionOfTargetValue.containsKey(row.getTargetValue())) {
-                fractionOfTargetValue.put(row.getTargetValue(), 1D + fractionOfTargetValue.get(row.getTargetValue()));
+            Object targetValue = row.getAttributes().get(row.getColumnIndexOfTargetValue());
+            if (fractionOfTargetValue.containsKey(targetValue)){
+                fractionOfTargetValue.put(targetValue, 1D + fractionOfTargetValue.get(targetValue));
             } else {
-                fractionOfTargetValue.put(row.getTargetValue(), 1D);
+                fractionOfTargetValue.put(targetValue, 1D);
             }
         }
         //Calculate original entropy
@@ -66,11 +67,12 @@ public class ID3Algorithmn {
             //FRACTION FOR ONE ATTRIBUTE's target value e.g. old, young
             for (TrainingExampleRow row : trainingExample.getAttributes()) {
                 //Fraction of
+                Object targetValue = row.getAttributes().get(row.getColumnIndexOfTargetValue());
                 if (row.getAttributes().get(culmnOfAttribute).equals(entry.getKey())) {
-                    if (fractionOfInnerAttribute.containsKey(row.getTargetValue())) {
-                        fractionOfInnerAttribute.put(row.getTargetValue(), 1D + fractionOfInnerAttribute.get(row.getTargetValue()));
+                    if (fractionOfInnerAttribute.containsKey(targetValue)) {
+                        fractionOfInnerAttribute.put(targetValue, 1D + fractionOfInnerAttribute.get(targetValue));
                     } else {
-                        fractionOfInnerAttribute.put(row.getTargetValue(), 1D);
+                        fractionOfInnerAttribute.put(targetValue, 1D);
                     }
                 }
             }
