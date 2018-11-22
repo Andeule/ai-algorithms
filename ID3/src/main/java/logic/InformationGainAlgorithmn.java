@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public class ID3Algorithmn {
+public class InformationGainAlgorithmn {
 
     public static int DEVIDE_SCALE = 30;
 
@@ -20,8 +20,24 @@ public class ID3Algorithmn {
         return generatedTree;
     }
 
-    public static Tree executeID3(TrainingExample trainingExample){
-        return null;
+    /**
+     * Returns index of attribute with highest information gain
+     * @param trainingExample
+     * @return
+     */
+    protected static int calculateHighestInformationGain(TrainingExample trainingExample) {
+        double highestInformationGain = 0;
+        int indexOfAttributeWithHighestInformationgain = 0;
+        for (int i = 0; i < trainingExample.getHeadline().getAttributes().size(); i++) {
+            if (i != trainingExample.getHeadline().getColumnIndexOfTargetValue()) {
+                double informationGain = calculateInformationGain(trainingExample, i);
+                if (informationGain > highestInformationGain || informationGainIsSameButNameIsAlphabeticallyEarlier(trainingExample, informationGain, highestInformationGain, i, indexOfAttributeWithHighestInformationgain)) {
+                    highestInformationGain = informationGain;
+                    indexOfAttributeWithHighestInformationgain = i;
+                }
+            }
+        }
+        return indexOfAttributeWithHighestInformationgain;
     }
 
     public static double calculateInformationGain(TrainingExample trainingExample, int columnIndexOfAttribute) {
@@ -34,7 +50,7 @@ public class ID3Algorithmn {
 
     protected static double calculateOriginalEntropy(TrainingExample trainingExample) {
         //Get fraction of each target value
-        Map<Object, Double> fractionOfTargetValue = calculateFractionOfTargetValue(trainingExample,null,null);
+        Map<Object, Double> fractionOfTargetValue = calculateFractionOfTargetValue(trainingExample, null, null);
         //Calculate original entropy
         double countOfAttributes = trainingExample.getAttributes().size();
         double term = 0;
@@ -65,7 +81,7 @@ public class ID3Algorithmn {
         for (Map.Entry<Object, Double> entry : fractionOfAttribute.entrySet()) {
 
             //FRACTION FOR ONE ATTRIBUTE's target value e.g. old, young
-            Map<Object, Double> fractionOfInnerAttribute = calculateFractionOfTargetValue(trainingExample,columnOfAttribute, entry);
+            Map<Object, Double> fractionOfInnerAttribute = calculateFractionOfTargetValue(trainingExample, columnOfAttribute, entry);
             //calculate
             double term = 0;
             for (Map.Entry<Object, Double> entryOfInner : fractionOfInnerAttribute.entrySet()) {
@@ -81,18 +97,21 @@ public class ID3Algorithmn {
         return relativeEntropy;
     }
 
+    protected static boolean informationGainIsSameButNameIsAlphabeticallyEarlier(TrainingExample trainingExample, double informationGain, double highestInformationGain,int currentIndex, int indexOfAttributeWithHighestInformationgain) {
+        return informationGain == highestInformationGain &&
+                (trainingExample.getHeadline().getAttributes().get(currentIndex).compareTo(trainingExample.getHeadline().getAttributes().get(indexOfAttributeWithHighestInformationgain)) < 0);
+    }
 
     /**
-     *
      * @param trainingExample
-     * @param columnOfAttribute With this attribute you can restrict the calculation to a column.
-     *                          If it is null
-     * @param restrictionToOneAttribute  You can further restrict it to one value of that attribute e.g. column = "age" attributes of that column "average","old","young". Then you could restrict it to "young"
-     *                                   If this attribute is set, then columnOfAttribute must be also set.
+     * @param columnOfAttribute         With this attribute you can restrict the calculation to a column.
+     *                                  If it is null
+     * @param restrictionToOneAttribute You can further restrict it to one value of that attribute e.g. column = "age" attributes of that column "average","old","young". Then you could restrict it to "young"
+     *                                  If this attribute is set, then columnOfAttribute must be also set.
      * @return
      */
-    private static Map<Object, Double> calculateFractionOfTargetValue(TrainingExample trainingExample,@Nullable Integer columnOfAttribute,@Nullable Map.Entry<Object, Double> restrictionToOneAttribute) {
-        if(columnOfAttribute != null && restrictionToOneAttribute == null || columnOfAttribute == null && restrictionToOneAttribute != null)
+    private static Map<Object, Double> calculateFractionOfTargetValue(TrainingExample trainingExample, @Nullable Integer columnOfAttribute, @Nullable Map.Entry<Object, Double> restrictionToOneAttribute) {
+        if (columnOfAttribute != null && restrictionToOneAttribute == null || columnOfAttribute == null && restrictionToOneAttribute != null)
             throw new IllegalArgumentException("If columnfOfAttribute is set then restrictionToOneAttribute must be set also and vice versa.");
         Map<Object, Double> fractionOfTargetValue = new HashMap<>();
         for (TrainingExampleRow row : trainingExample.getAttributes()) {
@@ -106,4 +125,6 @@ public class ID3Algorithmn {
         }
         return fractionOfTargetValue;
     }
+
+
 }

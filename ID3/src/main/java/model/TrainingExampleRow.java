@@ -7,16 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class TrainingExampleRow<A> {
+public class TrainingExampleRow {
 
-    List<A> attributes = new ArrayList<>();
+    List<String> attributes = new ArrayList<>();
     int columnIndexOfTargetValue;
 
-    public TrainingExampleRow(int columnIndexOfTargetValue, A... attributes) {
+    public TrainingExampleRow(int columnIndexOfTargetValue, String... attributes) {
         this.columnIndexOfTargetValue = columnIndexOfTargetValue;
         this.attributes = Arrays.asList(attributes);
     }
-    public TrainingExampleRow(int columnIndexOfTargetValue, List<A> attributes) {
+    public TrainingExampleRow(int columnIndexOfTargetValue, List<String> attributes) {
         this.columnIndexOfTargetValue = columnIndexOfTargetValue;
         this.attributes = attributes;
     }

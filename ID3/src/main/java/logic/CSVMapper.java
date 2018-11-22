@@ -7,8 +7,6 @@ import model.TrainingExampleRow;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class CSVMapper {
 
@@ -22,12 +20,12 @@ public class CSVMapper {
             while ((line = br.readLine()) != null) {
                 String[] lineArray = line.split(cvsSplitBy);
                 if(isFirstLine) {
-                    TrainingExampleHeadline<String> trainingExampleHeadline = new TrainingExampleHeadline<String>(indexOfTargetColumn,lineArray);
+                    TrainingExampleHeadline trainingExampleHeadline = new TrainingExampleHeadline(indexOfTargetColumn,lineArray);
                     trainingExample.setHeadline(trainingExampleHeadline);
                     isFirstLine = false;
                 }
                 else{
-                    TrainingExampleRow<String> trainingExampleRow = new TrainingExampleRow<String>(indexOfTargetColumn,lineArray);
+                    TrainingExampleRow trainingExampleRow = new TrainingExampleRow(indexOfTargetColumn,lineArray);
                     trainingExample.getAttributes().add(trainingExampleRow);
                 }
             }
