@@ -11,11 +11,17 @@ import java.util.*;
 
 public class ID3Algorithmn {
 
+    public static int DEVIDE_SCALE = 30;
+
     public static Tree<String> execute(String[][] trainingExamples) {
         Tree<String> generatedTree = new Tree<String>(trainingExamples[0][0]); //ex: Age
 
 
         return generatedTree;
+    }
+
+    public static Tree executeID3(TrainingExample trainingExample){
+        return null;
     }
 
     public static double calculateInformationGain(TrainingExample trainingExample, int columnIndexOfAttribute) {
@@ -26,7 +32,7 @@ public class ID3Algorithmn {
         return informationGain;
     }
 
-    public static double calculateOriginalEntropy(TrainingExample trainingExample) {
+    protected static double calculateOriginalEntropy(TrainingExample trainingExample) {
         //Get fraction of each target value
         Map<Object, Double> fractionOfTargetValue = calculateFractionOfTargetValue(trainingExample,null,null);
         //Calculate original entropy
@@ -35,13 +41,12 @@ public class ID3Algorithmn {
         for (Map.Entry<Object, Double> entry : fractionOfTargetValue.entrySet()) {
             BigDecimal numinator = new BigDecimal(entry.getValue());
             BigDecimal denominator = new BigDecimal(countOfAttributes);
-            term += (-(numinator.divide(denominator).doubleValue()) * (Math.log(numinator.divide(denominator).doubleValue()) / Math.log(2)));
+            term += (-(numinator.divide(denominator, DEVIDE_SCALE, RoundingMode.HALF_UP).doubleValue()) * (Math.log(numinator.divide(denominator, DEVIDE_SCALE, RoundingMode.HALF_UP).doubleValue()) / Math.log(2)));
         }
         return term;
     }
 
-    //TODO encapsulate parts and make it more readable
-    public static double calculateRelativeEntropy(TrainingExample trainingExample, int columnOfAttribute) {
+    protected static double calculateRelativeEntropy(TrainingExample trainingExample, int columnOfAttribute) {
         double relativeEntropy = 0;
         int countNumberOfAttributes = trainingExample.getAttributes().size();
 
@@ -66,19 +71,16 @@ public class ID3Algorithmn {
             for (Map.Entry<Object, Double> entryOfInner : fractionOfInnerAttribute.entrySet()) {
                 BigDecimal numinator = new BigDecimal(entryOfInner.getValue());
                 BigDecimal denominator = new BigDecimal(entry.getValue());
-                term += (-(numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue()) * (Math.log(numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue()) / Math.log(2)));
+                term += (-(numinator.divide(denominator, DEVIDE_SCALE, RoundingMode.HALF_UP).doubleValue()) * (Math.log(numinator.divide(denominator, DEVIDE_SCALE, RoundingMode.HALF_UP).doubleValue()) / Math.log(2)));
             }
             BigDecimal numinator = new BigDecimal(entry.getValue());
             BigDecimal denominator = new BigDecimal(countNumberOfAttributes);
-            term *= numinator.divide(denominator, 4, RoundingMode.HALF_DOWN).doubleValue();
+            term *= numinator.divide(denominator, DEVIDE_SCALE, RoundingMode.HALF_UP).doubleValue();
             relativeEntropy += term;
         }
         return relativeEntropy;
     }
 
-///////////////////////////////////////////////
-//------------PRIVATE------------------------//
-///////////////////////////////////////////////
 
     /**
      *
