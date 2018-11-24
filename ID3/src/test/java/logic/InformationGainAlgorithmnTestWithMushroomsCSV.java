@@ -12,7 +12,9 @@ public class InformationGainAlgorithmnTestWithMushroomsCSV {
     TrainingExample trainingExample;
     @Before
     public void setup() throws IOException {
-        trainingExample = CSVMapper.mapFromCSVFile("C:\\Users\\ahr\\Google Drive\\Master Studium Bamberg\\AngewandteInformatik\\2nd - WS18\\KogSys-ML-M\\Exercise1\\mushrooms.csv", 0);
+        ClassLoader classLoader = getClass().getClassLoader();
+        String filepath = classLoader.getResource("mushrooms.csv").getPath();
+        trainingExample = CSVMapper.mapFromCSVFile(filepath, 0);
     }
 
     @Test
