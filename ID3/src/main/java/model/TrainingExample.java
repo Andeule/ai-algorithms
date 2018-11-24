@@ -1,6 +1,5 @@
 package model;
 
-import com.sun.istack.internal.Nullable;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -11,14 +10,16 @@ import java.util.List;
 @NoArgsConstructor
 public class TrainingExample {
 
-    private List<TrainingExampleRow> attributes = new ArrayList<>();
-    ;
+    private List<TrainingExampleRow> exampleRowList = new ArrayList<>();
+
     private TrainingExampleHeadline headline;
 
 
-    public TrainingExample(TrainingExampleHeadline headline, List<TrainingExampleRow> attributes) {
+
+
+    public TrainingExample(TrainingExampleHeadline headline, List<TrainingExampleRow> exampleRowList) {
         this.headline = headline;
-        this.attributes = attributes;
+        this.exampleRowList = exampleRowList;
     }
 
 }

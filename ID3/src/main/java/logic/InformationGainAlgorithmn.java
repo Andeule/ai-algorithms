@@ -44,7 +44,10 @@ public class InformationGainAlgorithmn {
         double originalEntropy = calculateOriginalEntropy(trainingExample);
         double relativeEntropy = calculateRelativeEntropy(trainingExample, columnIndexOfAttribute);
         double informationGain = originalEntropy - relativeEntropy;
-        System.out.printf("Information gain for %s: %s%n", trainingExample.getHeadline().getAttributes().get(columnIndexOfAttribute), informationGain);
+        System.out.printf("%s %n",trainingExample.getHeadline().getAttributes().get(columnIndexOfAttribute));
+        //System.out.printf("%s %23s %n", originalEntropy, "Original entropy");
+        //System.out.printf("%s %23s %n", relativeEntropy, "Relative entropy");
+        System.out.printf("%s %23s %n", informationGain, "Information gain");
         return informationGain;
     }
 
@@ -52,7 +55,7 @@ public class InformationGainAlgorithmn {
         //Get fraction of each target value
         Map<Object, Double> fractionOfTargetValue = calculateFractionOfTargetValue(trainingExample, null, null);
         //Calculate original entropy
-        double countOfAttributes = trainingExample.getAttributes().size();
+        double countOfAttributes = trainingExample.getExampleRowList().size();
         double term = 0;
         for (Map.Entry<Object, Double> entry : fractionOfTargetValue.entrySet()) {
             BigDecimal numinator = new BigDecimal(entry.getValue());
@@ -64,11 +67,11 @@ public class InformationGainAlgorithmn {
 
     protected static double calculateRelativeEntropy(TrainingExample trainingExample, int columnOfAttribute) {
         double relativeEntropy = 0;
-        int countNumberOfAttributes = trainingExample.getAttributes().size();
+        int countNumberOfAttributes = trainingExample.getExampleRowList().size();
 
         //calculate whole fraction of that attribute e.g. age
         Map<Object, Double> fractionOfAttribute = new HashMap<>();
-        for (TrainingExampleRow row : trainingExample.getAttributes()) {
+        for (TrainingExampleRow row : trainingExample.getExampleRowList()) {
             Object cellValueAttribute = row.getAttributes().get(columnOfAttribute);
             if (fractionOfAttribute.containsKey(cellValueAttribute)) {
                 fractionOfAttribute.put(cellValueAttribute, 1D + fractionOfAttribute.get(cellValueAttribute));
@@ -114,7 +117,7 @@ public class InformationGainAlgorithmn {
         if (columnOfAttribute != null && restrictionToOneAttribute == null || columnOfAttribute == null && restrictionToOneAttribute != null)
             throw new IllegalArgumentException("If columnfOfAttribute is set then restrictionToOneAttribute must be set also and vice versa.");
         Map<Object, Double> fractionOfTargetValue = new HashMap<>();
-        for (TrainingExampleRow row : trainingExample.getAttributes()) {
+        for (TrainingExampleRow row : trainingExample.getExampleRowList()) {
             Object targetValue = row.getAttributes().get(row.getColumnIndexOfTargetValue());
             if ((columnOfAttribute == null && restrictionToOneAttribute == null) || row.getAttributes().get(columnOfAttribute).equals(restrictionToOneAttribute.getKey()))
                 if (fractionOfTargetValue.containsKey(targetValue)) {

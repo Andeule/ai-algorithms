@@ -29,13 +29,13 @@ public class CSVMapperTest {
     public void testFirstLineWithMushroomsCSVFile() throws IOException {
         TrainingExample trainingExample = CSVMapper.mapFromCSVFile(filepath, 0);
         String[] assertionFirstAttributeLine = "p,x,s,n,t,p,f,c,n,k,w,k,s,u".split(",");
-        Assert.assertEquals(assertionFirstAttributeLine, trainingExample.getAttributes().get(0).getAttributes().toArray());
+        Assert.assertEquals(assertionFirstAttributeLine, trainingExample.getExampleRowList().get(0).getAttributes().toArray());
     }
 
     @Test
     public void testLastLineWithMushroomsCSVFile() throws IOException {
         TrainingExample trainingExample = CSVMapper.mapFromCSVFile(filepath, 0);
         String[] assertionLastAttributeLine = "e,x,s,n,f,n,a,c,b,y,o,o,c,l".split(",");
-        Assert.assertEquals(assertionLastAttributeLine, trainingExample.getAttributes().get(trainingExample.getAttributes().size() - 1).getAttributes().toArray());
+        Assert.assertEquals(assertionLastAttributeLine, trainingExample.getExampleRowList().get(trainingExample.getExampleRowList().size() - 1).getAttributes().toArray());
     }
 }

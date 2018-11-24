@@ -26,7 +26,7 @@ public class CSVMapper {
                 }
                 else{
                     TrainingExampleRow trainingExampleRow = new TrainingExampleRow(indexOfTargetColumn,lineArray);
-                    trainingExample.getAttributes().add(trainingExampleRow);
+                    trainingExample.getExampleRowList().add(trainingExampleRow);
                 }
             }
             return trainingExample;

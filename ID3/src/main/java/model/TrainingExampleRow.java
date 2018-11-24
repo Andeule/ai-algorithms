@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 public class TrainingExampleRow {
 
-    List<String> attributes = new ArrayList<>();
+    List<String> attributes;
     int columnIndexOfTargetValue;
 
     public TrainingExampleRow(int columnIndexOfTargetValue, String... attributes) {
