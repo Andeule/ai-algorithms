@@ -22,7 +22,6 @@ public class ID3AlgorithmnTestWithMushrooms {
     public void testID3(){
         Node tree = ID3Algorithmn.execute(trainingExample,new ArrayList<>(), null, "");
         tree.print();
-
     }
 
 }

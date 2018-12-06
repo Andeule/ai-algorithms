@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class InformationGainAlgorithmnTestWithMushroomsCSV {
 
@@ -35,6 +36,6 @@ public class InformationGainAlgorithmnTestWithMushroomsCSV {
 
     @Test
     public void testHighestInformationGain(){
-        Assert.assertEquals(5,InformationGainAlgorithmn.calculateHighestInformationGain(trainingExample));
+        Assert.assertEquals(5,InformationGainAlgorithmn.getIndexOfAttributeWithHighestInformationGain(trainingExample, new ArrayList<>()));
     }
 }

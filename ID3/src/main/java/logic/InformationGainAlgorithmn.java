@@ -13,23 +13,18 @@ public class InformationGainAlgorithmn {
 
     public static int DEVIDE_SCALE = 30;
 
-    public static Tree<String> execute(String[][] trainingExamples) {
-        Tree<String> generatedTree = new Tree<String>(trainingExamples[0][0]); //ex: Age
-
-
-        return generatedTree;
-    }
-
     /**
-     * Returns index of attribute with highest information gain
-     * @param trainingExample
-     * @return
+     * Returns the attribute (column) with the highes information gain.
+     *
+     * @param trainingExample           the whole {@link TrainingExample}
+     * @param indexOfTakenOutAttributes the index that are included in this list, will not take into consideration.
+     * @return returns the index of the attribute (column) with the highest information gain
      */
-    protected static int calculateHighestInformationGain(TrainingExample trainingExample) {
+    public static int getIndexOfAttributeWithHighestInformationGain(TrainingExample trainingExample, List<Integer> indexOfTakenOutAttributes) {
         double highestInformationGain = 0;
         int indexOfAttributeWithHighestInformationgain = 0;
         for (int i = 0; i < trainingExample.getHeadline().getAttributes().size(); i++) {
-            if (i != trainingExample.getHeadline().getColumnIndexOfTargetValue()) {
+            if (i != trainingExample.getHeadline().getColumnIndexOfTargetValue() && !indexOfTakenOutAttributes.contains(i)) {
                 double informationGain = calculateInformationGain(trainingExample, i);
                 if (informationGain > highestInformationGain || informationGainIsSameButNameIsAlphabeticallyEarlier(trainingExample, informationGain, highestInformationGain, i, indexOfAttributeWithHighestInformationgain)) {
                     highestInformationGain = informationGain;
@@ -44,10 +39,10 @@ public class InformationGainAlgorithmn {
         double originalEntropy = calculateOriginalEntropy(trainingExample);
         double relativeEntropy = calculateRelativeEntropy(trainingExample, columnIndexOfAttribute);
         double informationGain = originalEntropy - relativeEntropy;
-        System.out.printf("%s %n",trainingExample.getHeadline().getAttributes().get(columnIndexOfAttribute));
+        System.out.printf("%s %n", trainingExample.getHeadline().getAttributes().get(columnIndexOfAttribute));
         //System.out.printf("%s %23s %n", originalEntropy, "Original entropy");
         //System.out.printf("%s %23s %n", relativeEntropy, "Relative entropy");
-        System.out.printf("%s %23s %n", informationGain, "Information gain");
+        //System.out.printf("%s %23s %n", informationGain, "Information gain");
         return informationGain;
     }
 
@@ -100,22 +95,18 @@ public class InformationGainAlgorithmn {
         return relativeEntropy;
     }
 
-    protected static boolean informationGainIsSameButNameIsAlphabeticallyEarlier(TrainingExample trainingExample, double informationGain, double highestInformationGain,int currentIndex, int indexOfAttributeWithHighestInformationgain) {
-        return informationGain == highestInformationGain &&
-                (trainingExample.getHeadline().getAttributes().get(currentIndex).compareTo(trainingExample.getHeadline().getAttributes().get(indexOfAttributeWithHighestInformationgain)) < 0);
-    }
-
     /**
      * @param trainingExample
-     * @param columnOfAttribute         With this attribute you can restrict the calculation to a column.
-     *                                  If it is null
-     * @param restrictionToOneAttribute You can further restrict it to one value of that attribute e.g. column = "age" attributes of that column "average","old","young". Then you could restrict it to "young"
-     *                                  If this attribute is set, then columnOfAttribute must be also set.
+     * @param columnOfAttribute         With this attribute you can restrict the calculation to a column and a specific attribute of it (which will be defiend by the variable restrictionToOneAttribute).
+     *                                  If this variable is set, then columnOfAttribute must be also set.
+     * @param restrictionToOneAttribute You can restrict the calculation to one value of that attribute e.g. column = "age" attributes of that column "average","old","young". Then you could restrict it to "young"
+     *                                  If this variable is set, then columnOfAttribute must be also set.
      * @return
      */
     private static Map<Object, Double> calculateFractionOfTargetValue(TrainingExample trainingExample, @Nullable Integer columnOfAttribute, @Nullable Map.Entry<Object, Double> restrictionToOneAttribute) {
         if (columnOfAttribute != null && restrictionToOneAttribute == null || columnOfAttribute == null && restrictionToOneAttribute != null)
             throw new IllegalArgumentException("If columnfOfAttribute is set then restrictionToOneAttribute must be set also and vice versa.");
+
         Map<Object, Double> fractionOfTargetValue = new HashMap<>();
         for (TrainingExampleRow row : trainingExample.getExampleRowList()) {
             Object targetValue = row.getAttributes().get(row.getColumnIndexOfTargetValue());
@@ -127,6 +118,13 @@ public class InformationGainAlgorithmn {
                 }
         }
         return fractionOfTargetValue;
+    }
+
+    protected static boolean informationGainIsSameButNameIsAlphabeticallyEarlier(TrainingExample trainingExample, double informationGain, double highestInformationGain, int currentIndex, int indexOfAttributeWithHighestInformationgain) {
+        return informationGain == highestInformationGain &&
+                (trainingExample.getHeadline().getAttributes().get(currentIndex)
+                        .compareTo(trainingExample.getHeadline().getAttributes().get(indexOfAttributeWithHighestInformationgain))
+                        < 0);
     }
 
 

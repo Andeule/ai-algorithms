@@ -39,8 +39,8 @@ public class ID3AlgorithmnTestWithCreditWorthiness {
 
     @Test
     public void testGetDecisionAttributesOfA(){
-        int index = ID3Algorithmn.getAttributeIndexWithHighestInformationGain(trainingExample, new ArrayList<>());
-        List<String> decisionAttributesOfA = ID3Algorithmn.getDecisionAttributesOfA(trainingExample, index);
+        int index = InformationGainAlgorithmn.getIndexOfAttributeWithHighestInformationGain(trainingExample, new ArrayList<>());
+        List<String> decisionAttributesOfA = ID3Algorithmn.getPossibleValuesOfA(trainingExample, index);
         Assert.assertEquals(3, decisionAttributesOfA.size());
         List<String> expectedList = new ArrayList<>();
         expectedList.add("average");
@@ -51,7 +51,7 @@ public class ID3AlgorithmnTestWithCreditWorthiness {
 
     @Test
     public void testAllTargetValuesAreSame(){
-        boolean same = ID3Algorithmn.allExampleTargetValueArePositive(trainingExample);
+        boolean same = ID3Algorithmn.allExampleTargetValueAreIdentical(trainingExample);
         Assert.assertFalse(same);
 
 
@@ -61,7 +61,7 @@ public class ID3AlgorithmnTestWithCreditWorthiness {
         exampleRows.add(new TrainingExampleRow(0, "high", "average", "clerk", "sufficient"));
         TrainingExample trainingExampleWithSameTargetValue = new TrainingExample(new TrainingExampleHeadline(0, "worthy", "age", "occupation", "security"), exampleRows);
 
-        same = ID3Algorithmn.allExampleTargetValueArePositive(trainingExampleWithSameTargetValue);
+        same = ID3Algorithmn.allExampleTargetValueAreIdentical(trainingExampleWithSameTargetValue);
         Assert.assertTrue(same);
     }
 
